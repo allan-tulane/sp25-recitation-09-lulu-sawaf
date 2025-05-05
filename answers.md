@@ -11,7 +11,6 @@ Place all written answers from `recitation-09.md` here for easier grading.
 
 
 - **2)**
-worst case: O((n+m)long) where n is total number of nodes, m is total number of
-edges, k is number of connected components
+worst case: O((n+m)long)
 - **4)**
 work is O(n^2logn)
