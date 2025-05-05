@@ -4,7 +4,6 @@ from math import sqrt
 
 def prim(graph):
     """
-    ### TODO:
     Update this method to work when the graph has multiple connected components.
     Rather than returning a single tree, return a list of trees,
     one per component, containing the MST for each component.
@@ -30,14 +29,20 @@ def prim(graph):
 
                 return prim_helper(visited, frontier, tree)
         
-    # pick first node as source arbitrarily
-    source = list(graph.keys())[0]
-    frontier = []
-    heappush(frontier, (0, source, source))
-    visited = set()  # store the visited nodes (don't need distance anymore)
-    tree = set()
-    prim_helper(visited, frontier, tree)
-    return tree
+    visited = set()
+    forest = [] # create an empty list to store one MST per connected component
+    # for disconnected components, start Prims algorithm from every unvisited node
+    for node in graph: # for ever node in the graph
+        if node not in visited: # if it has not been visited
+            frontier = [] # give it an empty frontier
+            tree = set()
+            heappush(frontier, (0, node, node)) # dummy edge to start prim
+            prim_helper(visited, frontier, tree)
+            # remove dummy edge from node to itself
+            tree = {edge for edge in tree if edge[1] != edge[2]}
+            forest.append(tree)
+
+    return forest
 
 def test_prim():    
     graph = {
@@ -81,8 +86,17 @@ def mst_from_points(points):
       a list of edges of the form (weight, node1, node2) indicating the minimum spanning
       tree connecting the cities in the input.
     """
-    ###TODO
-    pass
+        # create a complete graph: compute weighted edges between all pairs of points
+        for i in range(len(points)):
+        for j in range(i + 1, len(points)):
+            p1 = points[i]
+            p2 = points[j]
+            weight = euclidean_distance(p1, p2)
+            # add undirected edge between the two cities
+            graph[p1[0]].add((p2[0], weight))
+            graph[p2[0]].add((p1[0], weight))
+    # run Prim's algorithm to get the MST for the (single) connected component
+    return prim(graph)[0]
 
 def euclidean_distance(p1, p2):
     return sqrt((p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)
